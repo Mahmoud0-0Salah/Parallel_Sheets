@@ -8,7 +8,8 @@ typedef struct VectorData{int* a;int* b;int* c;int index} VectorData;
 void* solve(void* arg)
 {
 	VectorData* v =(VectorData*) arg;
-	v->c[v->index] = v->a[v->index] + v->b[v->index];
+	v->c[v->index]=v->b[v->index]+v->a[v->index];
+
 }
 
 int main(int argc,char* argv[])
@@ -20,20 +21,22 @@ int main(int argc,char* argv[])
 	int a[n];
 	int b[n];
 	int c[n];
-	for (int i=1;i<=n;i++)
-	{
-		a[i-1]=i;
-		b[i-1]=i;
-	}
-	pthread_t t1;
-	VectorData v1;
-	v1.a=a;v1.b=b;v1.c=c;
+	pthread_t th[n];
+	VectorData data[n];
 	for (int i=0;i<n;i++)
 	{
-		v1.index=i;
-		pthread_create(&t1,NULL,solve,&v1);
-		pthread_join(t1,NULL);
+		a[i]=i+1;
+		b[i]=i+1;
+		data[i].a=a;
+		data[i].b=b;
+		data[i].c=c;
+		data[i].index=i;
+		pthread_create(&th[i],NULL,solve,&data[i]);
 	}
+
 	for (int i=0;i<n;i++)
-		printf("%d\n",c[i]);
+		pthread_join(th[i],NULL);
+	for (int i=0;i<n;i++)
+		printf("%d, ",c[i]);
+	printf("\n");
 }

@@ -1,24 +1,25 @@
-#include <stdio.h>
-#include <pthread.h>
+#include<stdio.h>
+#include<pthread.h>
 
-typedef struct ThreadData{int id;} ThreadData;
+typedef struct {int id;} ThreadData;
 
-void* solve(void* arg)
+void * solve(void* arg)
 {
-	ThreadData* info = (ThreadData*) arg;
-	printf("%d\n",info->id);
-	return NULL;
+	ThreadData* data = (ThreadData*) arg;
+	printf("%d\n",data->id);
 }
 
 int main(int argc,char* argv[])
 {
-	ThreadData t1,t2;
-	t1.id =1;
-	t2.id =2;
-	pthread_t T1,T2;
-	pthread_create(&T1,NULL,solve,&t1);
-	pthread_create(&T2,NULL,solve,&t2);
-	pthread_join(T1,NULL);
-	pthread_join(T2,NULL);
-	return 0;
+	pthread_t th[3];
+	ThreadData data[3];
+	for (int i=0;i<3;i++)
+	{
+		data[i].id=i+1;
+		pthread_create(&th[i],NULL,solve,&data[i]);
+	}
+	for (int i=0;i<3;i++)
+	{
+		pthread_join(th[i],NULL);
+	}
 }

@@ -1,35 +1,31 @@
-#include <stdio.h>
-#include <pthread.h>
+#include<stdio.h>
+#include<pthread.h>
 
-typedef struct ThreadResult{int id;int res;} ThreadResult;
+typedef struct {int id;int res;} ThreadData;
 
-void *solve(void *argv)
+void * solve(void* arg)
 {
-
-	ThreadResult* r = (ThreadResult*) argv;
-	r->res=r->id*r->id;
-//	printf("%d  %d\n",r->res,r->id);
-
-	return r;
+        ThreadData* data = (ThreadData*) arg;
+	data->res=data->id*data->id;
+	return data;
 }
 
-int main(int argc,char *argv[])
+int main(int argc,char* argv[])
 {
-	pthread_t t1,t2,t3;
-	ThreadResult r1,r2,r3;
-	r1.id =2; r2.id =3; r3.id =4;
-	pthread_create(&t1,NULL,solve,&r1);
-	pthread_create(&t2,NULL,solve,&r2);
-	pthread_create(&t3,NULL,solve,&r3);
-	ThreadResult* ans;
-
-	pthread_join(t1,(void **)&ans);
-	printf("%d  %d\n",ans->res,ans->id);
-
-	pthread_join(t2,(void **)&ans);
-	printf("%d  %d\n",ans->res,ans->id);
-
-	pthread_join(t3,(void **)&ans);
-	printf("%d  %d\n",ans->res,ans->id);
-	return 0;
+        pthread_t th[3];
+        ThreadData data[3];
+        for (int i=0;i<3;i++)
+        {
+                data[i].id=i+2;
+                pthread_create(&th[i],NULL,solve,&data[i]);
+        }
+	ThreadData* ans;
+        for (int i=0;i<3;i++)
+        {
+                pthread_join(th[i],(void**)&ans);
+		printf("id = %d, res =%d\n",ans->id,ans->res);
+        }
 }
+
+
+
